@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import { observable } from 'mobx';
+import { observable, configure, action } from 'mobx';
 import { observer } from 'mobx-react';
-// import { isComputedValue } from 'mobx/lib/core/computedvalue';
 
-// Observable object
+configure({ enforceActions: 'observed' });
+
 const nickName = observable({
   firstName: 'Myroslav',
   age: 32,
@@ -23,48 +23,34 @@ const nickName = observable({
   decrement() {
     this.age--;
   }
+}, {
+  increment: action,
+  decrement: action,
 });
 
-// Observable array
-// This remains observable even after render.
-const todos = observable([
-  { text: 'Learn React' },
-  { text: 'Learn MobX' },
-]);
 
 @observer
 class App extends Component {
 
-  // countIncrementHandler = () => this.props.store.increment();
-  // countDecrementHandler = () => this.props.store.decrement();
+  countIncrementHandler = () => this.props.store.increment();
+  countDecrementHandler = () => this.props.store.decrement();
 
   render() {
 
     return (
       <div className="App">
-        {/*<h1>{this.props.store.getNickName}</h1>*/}
-        {/*<h1>{this.props.store.age}</h1>*/}
-        {/*<button onClick={this.countIncrementHandler}>+1</button>*/}
-        {/*<button onClick={this.countDecrementHandler}>-1</button>*/}
-
-        <ul>
-          {this.props.store.map((item) => {
-            const { text } = item;
-
-            return <li key={text}>{text}</li>
-          })}
-        </ul>
+        <h1>{this.props.store.getNickName}</h1>
+        <h1>{this.props.store.age}</h1>
+        <button onClick={this.countIncrementHandler}>+1</button>
+        <button onClick={this.countDecrementHandler}>-1</button>
       </div>
     );
   }
-
 }
 
 
-ReactDOM.render(<App store={todos}/>, document.getElementById('root'));
+ReactDOM.render(<App store={nickName}/>, document.getElementById('root'));
 
-// "Todos" remains observable even after render.
-todos.push({ text: 'After render' });
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
